@@ -5,7 +5,6 @@ const shops = [
     vendor: "Microsoft",
     url: "https://www.xbox.com/es-es/configure/8WJ714N3RBTL",
     checkStock: async ({ page }) => {
-      await page.screenshot({ path: "example.png" });
       const content = await page.textContent(
         '[aria-label="Finalizar la compra del pack"]'
       );
@@ -15,7 +14,7 @@ const shops = [
 ];
 
  (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({headless: true});
 
     for (const shop of shops) {
         const {checkStock, vendor, url} = shop
@@ -23,6 +22,8 @@ const shops = [
         await page.goto(url);
         const hasStock = await checkStock({page})
         console.log(`${vendor}: ${hasStock ? 'in stock!!!!' : 'out of stock 😢'}`)
+        await page.screenshot({path: `screenshots/${vendor}.png`})
+        await page.close()
     }
 
   await browser.close();
